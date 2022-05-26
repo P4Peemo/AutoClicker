@@ -15,6 +15,16 @@ buttons = {
     'retrieve_dish_btn': (1620, 915),
     'pot_locations': [(360, 700), (660, 700), (960, 700), (1260, 700), (1560, 700)],
     'stove_locations': [(360, 810), (660, 810), (960, 810), (1260, 810), (1560, 810)],
+    'display_customer_wave_btn': (1730, 210),
+    'start_customer_wave_btn': (800, 840),
+    'customer_wave_dishes': [
+        (965, 525), (1005, 545),
+        (325, 200), (450, 215), (575, 200), (1350, 200), (1475, 215), (1600, 200),
+        (995, 590), (885,530),
+        (325, 465), (450, 480), (575, 465), (1375, 465), (1495, 480), (1610, 465),
+        (1010, 625), (940, 615),
+        (400, 630), (545, 645), (690, 630), (1225, 630), (1370, 645), (1515, 630),
+    ],
     'display_buffets_btn': (310, 940),
     'buffets_locations': [(330, 300), (330, 470), (330, 640), (330, 810)],
     'buffet_check_out_btn': (1720, 860)
@@ -92,7 +102,6 @@ class SwyController:
                 print('Cleared a dish cooking stove')
             else:
                 print('cancel button not found.')
-        print('cleared stoves: ', cleared_stoves)
         return cleared_stoves
 
     def scroll_dish_menu(self):
@@ -114,7 +123,6 @@ class SwyController:
         # TODO cofirm new dish unlock notification, check whether it needs confirmation.
         # get available stoves
         stoves = self.get_batch_pos('ready_to_cook_stove.png', 0.9)
-        print(len(stoves))
         scroll_times = 0
         not_enough_ingredients = False
         for stove in stoves:
@@ -253,6 +261,20 @@ class SwyController:
         time.sleep(1)
         return dishes_to_cook
 
+    def start_customer_wave(self):
+        pyautogui.click(buttons['display_customer_wave_btn'])
+        time.sleep(1)
+        pyautogui.click(buttons['start_customer_wave_btn'])
+        time.sleep(3)
+        counter = 26
+        customer_wave_dishes = buttons['customer_wave_dishes']
+        while counter > 0:
+            for dish in customer_wave_dishes:
+                pyautogui.click(dish)
+            counter -= 1
+        time.sleep(10)
+        pyautogui.click(960, 960)
+
 if __name__ == '__main__':
     print(pyautogui.__version__)
 
@@ -266,9 +288,10 @@ if __name__ == '__main__':
     #     pyautogui.moveTo(390, 900)
     #     time.sleep(1)
     #     pyautogui.dragTo(390, 350, duration=5)
+    controller.start_customer_wave()
     # print(pyautogui.position()) #390 900 390 270
     # controller.check_buffet_dishes()
-    dishes_to_cook = controller.check_buffet_dishes()
-    print(f'dishes to cook: {dishes_to_cook}')
-    controller.enter_kitchen_from_canteen()
-    controller.cook_buffet_dishes(dishes_to_cook)
+    # dishes_to_cook = controller.check_buffet_dishes()
+    # print(f'dishes to cook: {dishes_to_cook}')
+    # controller.enter_kitchen_from_canteen()
+    # controller.cook_buffet_dishes(dishes_to_cook)
