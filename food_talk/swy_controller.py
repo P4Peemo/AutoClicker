@@ -4,7 +4,7 @@ import time
 from random import shuffle
 import pyautogui
 
-os.chdir(''.join([os.getcwd(), '\\food_talk\\assets']))
+os.chdir(''.join([os.getcwd(), '\\assets']))
 
 buttons = {
     'hamburger_btn': (100, 400),
@@ -42,6 +42,7 @@ class SwyController:
         self.swy_window = None
 
     def activate_window(self):
+        pyautogui.getAllWindows()
         if not self.swy_window:
             try:
                 self.swy_window = pyautogui.getWindowsWithTitle(self.windowTitle)[0]
@@ -49,10 +50,18 @@ class SwyController:
                 print(f'No window with {self.windowTitle} is found, please check your\
                     window name.')
                 return
-
-        self.swy_window.activate()
-        self.swy_window.maximize()
+        try:
+            self.swy_window.activate()
+            self.swy_window.maximize()
+        except:
+            self.swy_window.minimize()
+            self.swy_window.maximize()
+            self.swy_window.activate()
         print(f'Window size: {self.swy_window.size}')
+        time.sleep(1)
+
+    def minimize_window(self):
+        self.swy_window.minimize()
         time.sleep(1)
 
     def get_batch_pos(self, img, confidence=1.0):
@@ -71,7 +80,7 @@ class SwyController:
         pyautogui.click(buttons['hamburger_btn'])
         time.sleep(1)
         pyautogui.click(buttons['kitchen_round_btn'])
-        time.sleep(3)
+        time.sleep(5)
 
     def enter_canteen_from_kitchen(self):
         print('Entering cateen from kitchen')
@@ -81,6 +90,10 @@ class SwyController:
     def enter_kitchen_from_canteen(self):
         print('Entering kitchen from canteen')
         pyautogui.click(buttons['kitchen_btn_in_canteen'])
+        time.sleep(5)
+
+    def go_back_to_main(self):
+        pyautogui.click(150, 80)
         time.sleep(5)
 
     # primary job is to make way for buffet cooking
@@ -139,9 +152,15 @@ class SwyController:
             pyautogui.click(stove.left, stove.top)
             time.sleep(1)
             
+            # make sure we are on the right panel of dish selections
+            if all_dishes_icon := pyautogui.locateOnScreen('all_dishes_icon.png', confidence=0.9):
+                pyautogui.click(all_dishes_icon.left, all_dishes_icon.top)
+
             # previous dishes are short of ingredients to cook
             for _ in range(scroll_times):
+                print('scrolling...')
                 self.scroll_dish_menu()
+            
             locked_dishes = self.get_batch_pos('dish_able_to_unlock.png', 0.9)
             shuffle(locked_dishes)
 
@@ -356,12 +375,37 @@ class SwyController:
                     pyautogui.click(close_btn.left, close_btn.top)
                     time.sleep(1)
 
+    def locked_dish_cooking(self):
+        self.activate_window()
+        self.enter_kitchen_from_main()
+        self.cook_locked_dishes()
+        self.go_back_to_main()
+        self.minimize_window()
+    
+    def buffet_dish_cooking(self):
+        self.activate_window()
+        self.enter_kitchen_from_main()
+        self.enter_canteen_from_kitchen()
+        self.check_buffet_dishes()
+        self.enter_kitchen_from_canteen()
+        self.cook_buffet_dishes()
+        self.go_back_to_main()
+        self.minimize_window()
+    
+    def temple_assembly_dish_cooking(self):
+        self.activate_window()
+        self.enter_kitchen_from_main()
+        self.enter_canteen_from_kitchen()
+        self.check_buffet_dishes()
+        self.enter_kitchen_from_canteen()
+        self.cook_buffet_dishes()
+        self.go_back_to_main()
+        self.minimize_window()
+
 if __name__ == '__main__':
     print(pyautogui.__version__)
-
     controller = SwyController()
-    controller.activate_window()
-    time.sleep(1)
+    # controller.activate_window()
     # controller.enter_kitchen_from_main()
     # controller.enter_canteen_from_kitchen()
     
@@ -370,7 +414,7 @@ if __name__ == '__main__':
     #     time.sleep(1)
     #     pyautogui.dragTo(390, 350, duration=5)
     # controller.start_customer_wave()
-    controller.check_temple_assembly_dishes()
+    # controller.check_temple_assembly_dishes()
     # print(pyautogui.position())
     # controller.check_buffet_dishes()
     # dishes_to_cook = controller.check_buffet_dishes()
