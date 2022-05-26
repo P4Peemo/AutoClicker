@@ -88,11 +88,23 @@ class SwyController:
                     time.sleep(1)
                     # click blank area in case unlocked new dishes
                     pyautogui.click(100, 540)
-                    cleared_stoves.append(stove)
+                cleared_stoves.append(stove)
                 print('Cleared a dish cooking stove')
             else:
                 print('cancel button not found.')
+        print('cleared stoves: ', cleared_stoves)
         return cleared_stoves
+
+    def scroll_dish_menu(self):
+        pyautogui.moveTo(400, 900)
+        pyautogui.dragTo(400, 320, duration=5)
+        time.sleep(1)
+    
+    def scroll_dish_menu_to_bottom(self):
+        pyautogui.moveTo(400, 400)
+        for _ in range(10):
+            pyautogui.scroll(-1)
+            time.sleep(1)
 
     def cook_locked_dishes(self):
         # collect cooked dishes
@@ -102,17 +114,22 @@ class SwyController:
         # TODO cofirm new dish unlock notification, check whether it needs confirmation.
         # get available stoves
         stoves = self.get_batch_pos('ready_to_cook_stove.png', 0.9)
-
+        print(len(stoves))
+        scroll_times = 0
+        not_enough_ingredients = False
         for stove in stoves:
             # not enough ingredient to cook any dish
-            # TODO scroll the menu to continue search
-            if pyautogui.locateOnScreen('cook_button.png', confidence=0.9):
+            if not_enough_ingredients:
                 pyautogui.click('close_cooking_menu_button.png')
                 print('Please wait for the farm to restock before cooking more dishes')
                 break
 
             pyautogui.click(stove.left, stove.top)
             time.sleep(1)
+            
+            # previous dishes are short of ingredients to cook
+            for _ in range(scroll_times):
+                self.scroll_dish_menu()
             locked_dishes = self.get_batch_pos('dish_able_to_unlock.png', 0.9)
             shuffle(locked_dishes)
 
@@ -125,31 +142,67 @@ class SwyController:
                     print('successfully cooked')
                     break
                 print('Not enough to cook, checking for next available dish...')
+            else:
+                cook_succeeded = False
+                while scroll_times < 2 and not cook_succeeded:
+                    self.scroll_dish_menu()
+                    scroll_times += 1
+                    locked_dishes = self.get_batch_pos('dish_able_to_unlock.png', 0.9)
+                    shuffle(locked_dishes)
+                    for dish in locked_dishes:
+                        pyautogui.click(dish.left, dish.top)
+                        if cook_btn := pyautogui.locateOnScreen('cook_button.png', confidence=0.9):
+                            pyautogui.click(cook_btn.left, cook_btn.top)
+                        time.sleep(1)
+                        if not pyautogui.locateOnScreen('cook_button.png', confidence=0.9):
+                            cook_succeeded = True
+                            print('successfully cooked')
+                            break
+                        print('Not enough to cook, checking for next available dish...')
+
+                # if previous locked dishes are not able to cook, use last resort to cook eggplants
+                if not cook_succeeded:
+                    self.scroll_dish_menu_to_bottom()
+                    if eggplant_icon := pyautogui.locateOnScreen('oil_stew_eggplant.png'):
+                        pyautogui.click(eggplant_icon.left, eggplant_icon.top)
+                        if cook_btn := pyautogui.locateOnScreen('cook_button.png', confidence=0.9):
+                            pyautogui.click(cook_btn.left, cook_btn.top)
+                        time.sleep(1)
+                        if not pyautogui.locateOnScreen('cook_button.png', confidence=0.9):
+                            cook_succeeded = True
+                            print('successfully cooked')
+                        else:
+                            not_enough_ingredients = True
         else:
             if pyautogui.locateOnScreen('cook_button.png', confidence=0.9):
                 pyautogui.click('close_cooking_menu_button.png')
                 print('Please wait for the farm to restock before cooking more dishes')
 
     def cook_buffet_dishes(self, n=3):
+        # collect cooked dishes
+        pyautogui.click(1630, 930)
+        time.sleep(1)
+        pyautogui.click(1730, 930)
+
         n = min(n, 5)
         ready_to_cook_stoves = self.get_batch_pos('ready_to_cook_stove.png', 0.9)
         ready_to_cook_stoves += self.clear_cooking_dishes(max(0, n - len(ready_to_cook_stoves)))
         buffet_dishes = []
-        
-        for stove in ready_to_cook_stoves:
+
+        print('ready to cook dishes: ', ready_to_cook_stoves)    
+        for stove in ready_to_cook_stoves[:n]:
             pyautogui.click(stove.left, stove.top)
             time.sleep(1)
             if not buffet_dishes:
                 buffet_dishes += self.get_batch_pos('burn_tail_buffet.png', 0.9)
                 buffet_dishes += self.get_batch_pos('eagle_rise_buffet.png', 0.9)
                 buffet_dishes += self.get_batch_pos('search_spring_buffet.png', 0.9)
-                # TODO add the last buffet pic
-            
+                buffet_dishes += self.get_batch_pos('deer_beep_buffet.png', 0.9)
             for dish in buffet_dishes:
                 pyautogui.click(dish.left, dish.top)
                 time.sleep(1)
                 # if already cooking in progress
-                if pyautogui.locateOnScreen('not_pending_dish.png', confidence=0.9):
+                if pyautogui.locateOnScreen('not_pending_dish.png'):
                     continue
     
                 if cook_btn := pyautogui.locateOnScreen('cook_button.png', confidence=0.9):
@@ -159,6 +212,10 @@ class SwyController:
                     print('successfully cooked')
                     break
                 print('Not enough to cook, checking for next available dish...')
+            else:
+                if close_btn := pyautogui.locateOnScreen('close_cooking_menu_button.png', confidence=0.9):
+                    pyautogui.click(close_btn.left, close_btn.top)
+                    time.sleep(1)
             # TODO
             # locate all buffet items location and check if need cooking
             # if need then click cook
@@ -179,6 +236,8 @@ class SwyController:
             
             # there is no valid buffet or the buffet is not finished yet
             if not submit_dish_locations or cook_dish_locations:
+                if close_btn := pyautogui.locateOnScreen('close_cooking_menu_button.png', confidence=0.9):
+                    pyautogui.click(close_btn.left, close_btn.top)
                 continue
 
             for submit_dish_btn in submit_dish_locations:
@@ -202,11 +261,14 @@ if __name__ == '__main__':
     time.sleep(1)
     # controller.enter_kitchen_from_main()
     # controller.enter_canteen_from_kitchen()
-    while True:
-        pyautogui.moveTo(390, 900)
-        time.sleep(1)
-        pyautogui.dragTo(390, 350, duration=5)
+    
+    # while True:
+    #     pyautogui.moveTo(390, 900)
+    #     time.sleep(1)
+    #     pyautogui.dragTo(390, 350, duration=5)
     # print(pyautogui.position()) #390 900 390 270
     # controller.check_buffet_dishes()
-    # controller.clear_cooking_dishes()
-    # controller.cook_locked_dishes()
+    dishes_to_cook = controller.check_buffet_dishes()
+    print(f'dishes to cook: {dishes_to_cook}')
+    controller.enter_kitchen_from_canteen()
+    controller.cook_buffet_dishes(dishes_to_cook)
