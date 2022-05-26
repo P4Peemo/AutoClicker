@@ -2,7 +2,6 @@
 import os
 import time
 from random import shuffle
-from subprocess import call
 import pyautogui
 
 os.chdir(''.join([os.getcwd(), '\\food_talk\\assets']))
@@ -27,7 +26,8 @@ buttons = {
     ],
     'display_buffets_btn': (310, 940),
     'buffets_locations': [(330, 300), (330, 470), (330, 640), (330, 810)],
-    'buffet_check_out_btn': (1720, 860)
+    'buffet_check_out_btn': (1720, 860),
+    'display_temple_assemblies_btn': (180, 940)
 }
 
 class SwyController:
@@ -84,9 +84,13 @@ class SwyController:
         time.sleep(5)
 
     # primary job is to make way for buffet cooking
-    def clear_cooking_dishes(self, n=3):
+    def clear_cooking_dishes(self, n=3, reversed=False):
         stoves = self.get_batch_pos('cooking_stove.png', 0.9)
         cleared_stoves = []
+
+        if reversed:
+            stoves = stoves[::-1]
+
         for stove in stoves[:n]:
             pyautogui.click(stove.left + 100, stove.top - 50)
             time.sleep(1)
@@ -197,7 +201,6 @@ class SwyController:
         ready_to_cook_stoves += self.clear_cooking_dishes(max(0, n - len(ready_to_cook_stoves)))
         buffet_dishes = []
 
-        print('ready to cook dishes: ', ready_to_cook_stoves)    
         for stove in ready_to_cook_stoves[:n]:
             pyautogui.click(stove.left, stove.top)
             time.sleep(1)
@@ -238,8 +241,8 @@ class SwyController:
         for buffet in buffets:
             pyautogui.click(buffet)
             time.sleep(1)
-            submit_dish_locations = self.get_batch_pos('submit_buffet_item_button.png', 0.9)
-            cook_dish_locations = self.get_batch_pos('cook_buffet_item_button.png', 0.9)
+            submit_dish_locations = self.get_batch_pos('submit_dish_button.png', 0.9)
+            cook_dish_locations = self.get_batch_pos('cook_dish_button.png', 0.9)
             dishes_to_cook += len(cook_dish_locations)
             
             # there is no valid buffet or the buffet is not finished yet
@@ -275,6 +278,84 @@ class SwyController:
         time.sleep(10)
         pyautogui.click(960, 960)
 
+    def select_temple_assembly(self):
+        pyautogui.click(buttons['display_temple_assemblies_btn'])
+        time.sleep(1)
+        # TODO add five-coloured dirt image
+        if shard_icon := pyautogui.locateOnScreen('ingredient_shard.png'):
+            pyautogui.click(shard_icon.left, shard_icon.top + 160)
+        else:
+            pass
+
+        time.sleep(1)
+        if close_btn := pyautogui.locateOnScreen('close_cooking_menu_button.png', confidence=0.9):
+            pyautogui.click(close_btn)
+            time.sleep(1)
+        else:
+            print('No close button found at temple assembly selection page')
+
+    def check_temple_assembly_dishes(self):
+        pyautogui.click(buttons['display_temple_assemblies_btn'])
+        time.sleep(1)
+        submit_dish_locations = self.get_batch_pos('submit_dish_button.png', 0.9)
+        cook_dish_locations = self.get_batch_pos('cook_dish_button.png', 0.9)
+
+        for submit_dish_btn in submit_dish_locations:
+            pyautogui.click(submit_dish_btn)
+            time.sleep(1)
+            if submit_btn := pyautogui.locateOnScreen('confirm_submit_dish_button.png', confidence=0.9):
+                pyautogui.click(submit_btn)
+                time.sleep(1)
+            else:
+                print('temple assembly dish submit button not found')
+
+        cook_dish_locations = self.get_batch_pos('cook_dish_button.png', 0.9)
+        if not cook_dish_locations:
+            pyautogui.click(buttons['buffet_check_out_btn'])
+            time.sleep(1)
+            # remove the reward notification
+            pyautogui.click(960, 960)
+        else:
+            if close_btn := pyautogui.locateOnScreen('close_cooking_menu_button.png', confidence=0.9):
+                pyautogui.click(close_btn.left, close_btn.top)
+
+        time.sleep(1)
+        return len(cook_dish_locations)
+
+    def cook_temple_assembly_dishes(self, n=3):
+        # collect cooked dishes
+        pyautogui.click(1630, 930)
+        time.sleep(1)
+        pyautogui.click(1730, 930)
+
+        ready_to_cook_stoves = self.get_batch_pos('ready_to_cook_stove.png', 0.9)
+        ready_to_cook_stoves += self.clear_cooking_dishes(max(0, n - len(ready_to_cook_stoves)), reversed=True)
+        temple_assembly_dishes = []
+
+        for stove in ready_to_cook_stoves[:n]:
+            pyautogui.click(stove.left, stove.top)
+            time.sleep(1)
+            if not temple_assembly_dishes:
+                temple_assembly_dishes = self.get_batch_pos('temple_assembly.png', 0.9)
+            for dish in temple_assembly_dishes:
+                pyautogui.click(dish.left, dish.top)
+                time.sleep(1)
+                # if already cooking in progress
+                if pyautogui.locateOnScreen('not_pending_dish.png'):
+                    continue
+    
+                if cook_btn := pyautogui.locateOnScreen('cook_button.png', confidence=0.9):
+                    pyautogui.click(cook_btn.left, cook_btn.top)
+                time.sleep(1)
+                if not pyautogui.locateOnScreen('cook_button.png', confidence=0.9):
+                    print('successfully cooked')
+                    break
+                print('Not enough to cook, checking for next available dish...')
+            else:
+                if close_btn := pyautogui.locateOnScreen('close_cooking_menu_button.png', confidence=0.9):
+                    pyautogui.click(close_btn.left, close_btn.top)
+                    time.sleep(1)
+
 if __name__ == '__main__':
     print(pyautogui.__version__)
 
@@ -288,8 +369,9 @@ if __name__ == '__main__':
     #     pyautogui.moveTo(390, 900)
     #     time.sleep(1)
     #     pyautogui.dragTo(390, 350, duration=5)
-    controller.start_customer_wave()
-    # print(pyautogui.position()) #390 900 390 270
+    # controller.start_customer_wave()
+    controller.check_temple_assembly_dishes()
+    # print(pyautogui.position())
     # controller.check_buffet_dishes()
     # dishes_to_cook = controller.check_buffet_dishes()
     # print(f'dishes to cook: {dishes_to_cook}')
