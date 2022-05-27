@@ -1,10 +1,7 @@
 # coding=utf-8
-import os
 import time
 from random import shuffle
 import pyautogui
-
-os.chdir(''.join([os.getcwd(), '\\assets']))
 
 buttons = {
     'hamburger_btn': (100, 400),
@@ -39,32 +36,31 @@ class SwyController:
 
     def __init__(self, windowTitle='Gameloop'):
         self.windowTitle = windowTitle
-        self.swy_window = None
+        self.__swy_window = None
 
     def activate_window(self):
-        pyautogui.getAllWindows()
-        if not self.swy_window:
-            try:
-                self.swy_window = pyautogui.getWindowsWithTitle(self.windowTitle)[0]
-            except:
-                print(f'No window with {self.windowTitle} is found, please check your\
-                    window name.')
-                return
         try:
-            self.swy_window.activate()
-            self.swy_window.maximize()
+            self.__swy_window = pyautogui.getWindowsWithTitle(self.windowTitle)[0]
         except:
-            self.swy_window.minimize()
-            self.swy_window.maximize()
-            self.swy_window.activate()
-        print(f'Window size: {self.swy_window.size}')
+            print(f'No window with {self.windowTitle} is found, please check your\
+                window name.')
+            return
+        try:
+            self.__swy_window.activate()
+            self.__swy_window.maximize()
+        except:
+            # some time it throws pyGetWindowException, this fixes the problem.
+            self.__swy_window.minimize()
+            self.__swy_window.maximize()
+            self.__swy_window.activate()
+        print(f'Window size: {self.__swy_window.size}')
         time.sleep(1)
 
     def minimize_window(self):
-        self.swy_window.minimize()
+        self.__swy_window.minimize()
         time.sleep(1)
 
-    def get_batch_pos(self, img, confidence=1.0):
+    def __get_batch_pos(self, img, confidence=1.0):
         if not img:
             return []
         boxes = list(pyautogui.locateAllOnScreen(img, confidence=confidence))
@@ -98,7 +94,7 @@ class SwyController:
 
     # primary job is to make way for buffet cooking
     def clear_cooking_dishes(self, n=3, reversed=False):
-        stoves = self.get_batch_pos('cooking_stove.png', 0.9)
+        stoves = self.__get_batch_pos('cooking_stove.png', 0.9)
         cleared_stoves = []
 
         if reversed:
@@ -139,7 +135,7 @@ class SwyController:
         pyautogui.click(1730, 930)
         # TODO cofirm new dish unlock notification, check whether it needs confirmation.
         # get available stoves
-        stoves = self.get_batch_pos('ready_to_cook_stove.png', 0.9)
+        stoves = self.__get_batch_pos('ready_to_cook_stove.png', 0.9)
         scroll_times = 0
         not_enough_ingredients = False
         for stove in stoves:
@@ -161,7 +157,7 @@ class SwyController:
                 print('scrolling...')
                 self.scroll_dish_menu()
             
-            locked_dishes = self.get_batch_pos('dish_able_to_unlock.png', 0.9)
+            locked_dishes = self.__get_batch_pos('dish_able_to_unlock.png', 0.9)
             shuffle(locked_dishes)
 
             for dish in locked_dishes:
@@ -178,7 +174,7 @@ class SwyController:
                 while scroll_times < 2 and not cook_succeeded:
                     self.scroll_dish_menu()
                     scroll_times += 1
-                    locked_dishes = self.get_batch_pos('dish_able_to_unlock.png', 0.9)
+                    locked_dishes = self.__get_batch_pos('dish_able_to_unlock.png', 0.9)
                     shuffle(locked_dishes)
                     for dish in locked_dishes:
                         pyautogui.click(dish.left, dish.top)
@@ -216,7 +212,7 @@ class SwyController:
         pyautogui.click(1730, 930)
 
         n = min(n, 5)
-        ready_to_cook_stoves = self.get_batch_pos('ready_to_cook_stove.png', 0.9)
+        ready_to_cook_stoves = self.__get_batch_pos('ready_to_cook_stove.png', 0.9)
         ready_to_cook_stoves += self.clear_cooking_dishes(max(0, n - len(ready_to_cook_stoves)))
         buffet_dishes = []
 
@@ -224,10 +220,11 @@ class SwyController:
             pyautogui.click(stove.left, stove.top)
             time.sleep(1)
             if not buffet_dishes:
-                buffet_dishes += self.get_batch_pos('burn_tail_buffet.png', 0.9)
-                buffet_dishes += self.get_batch_pos('eagle_rise_buffet.png', 0.9)
-                buffet_dishes += self.get_batch_pos('search_spring_buffet.png', 0.9)
-                buffet_dishes += self.get_batch_pos('deer_beep_buffet.png', 0.9)
+                buffet_dishes += self.__get_batch_pos('burn_tail_buffet.png', 0.9)
+                buffet_dishes += self.__get_batch_pos('eagle_rise_buffet.png', 0.9)
+                buffet_dishes += self.__get_batch_pos('search_spring_buffet.png', 0.9)
+                buffet_dishes += self.__get_batch_pos('deer_beep_buffet.png', 0.9)
+                buffet_dishes += self.__get_batch_pos('thousand_old_gay_buffet.png', 0.9)
             for dish in buffet_dishes:
                 pyautogui.click(dish.left, dish.top)
                 time.sleep(1)
@@ -260,8 +257,8 @@ class SwyController:
         for buffet in buffets:
             pyautogui.click(buffet)
             time.sleep(1)
-            submit_dish_locations = self.get_batch_pos('submit_dish_button.png', 0.9)
-            cook_dish_locations = self.get_batch_pos('cook_dish_button.png', 0.9)
+            submit_dish_locations = self.__get_batch_pos('submit_dish_button.png', 0.9)
+            cook_dish_locations = self.__get_batch_pos('cook_dish_button.png', 0.9)
             dishes_to_cook += len(cook_dish_locations)
             
             # there is no valid buffet or the buffet is not finished yet
@@ -316,8 +313,8 @@ class SwyController:
     def check_temple_assembly_dishes(self):
         pyautogui.click(buttons['display_temple_assemblies_btn'])
         time.sleep(1)
-        submit_dish_locations = self.get_batch_pos('submit_dish_button.png', 0.9)
-        cook_dish_locations = self.get_batch_pos('cook_dish_button.png', 0.9)
+        submit_dish_locations = self.__get_batch_pos('submit_dish_button.png', 0.9)
+        cook_dish_locations = self.__get_batch_pos('cook_dish_button.png', 0.9)
 
         for submit_dish_btn in submit_dish_locations:
             pyautogui.click(submit_dish_btn)
@@ -328,7 +325,7 @@ class SwyController:
             else:
                 print('temple assembly dish submit button not found')
 
-        cook_dish_locations = self.get_batch_pos('cook_dish_button.png', 0.9)
+        cook_dish_locations = self.__get_batch_pos('cook_dish_button.png', 0.9)
         if not cook_dish_locations:
             pyautogui.click(buttons['buffet_check_out_btn'])
             time.sleep(1)
@@ -347,7 +344,7 @@ class SwyController:
         time.sleep(1)
         pyautogui.click(1730, 930)
 
-        ready_to_cook_stoves = self.get_batch_pos('ready_to_cook_stove.png', 0.9)
+        ready_to_cook_stoves = self.__get_batch_pos('ready_to_cook_stove.png', 0.9)
         ready_to_cook_stoves += self.clear_cooking_dishes(max(0, n - len(ready_to_cook_stoves)), reversed=True)
         temple_assembly_dishes = []
 
@@ -355,7 +352,7 @@ class SwyController:
             pyautogui.click(stove.left, stove.top)
             time.sleep(1)
             if not temple_assembly_dishes:
-                temple_assembly_dishes = self.get_batch_pos('temple_assembly.png', 0.9)
+                temple_assembly_dishes = self.__get_batch_pos('temple_assembly.png', 0.9)
             for dish in temple_assembly_dishes:
                 pyautogui.click(dish.left, dish.top)
                 time.sleep(1)
