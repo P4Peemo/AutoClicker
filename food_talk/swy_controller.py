@@ -386,9 +386,17 @@ class SwyController:
         self.activate_window()
         self.enter_kitchen_from_main()
         self.enter_canteen_from_kitchen()
-        self.check_buffet_dishes()
+        n_dishes_to_cook = self.check_buffet_dishes()
         self.enter_kitchen_from_canteen()
-        self.cook_buffet_dishes()
+        self.cook_buffet_dishes(n_dishes_to_cook)
+        self.go_back_to_main()
+        self.minimize_window()
+    
+    def temple_assembly_selection(self):
+        self.activate_window()
+        self.enter_kitchen_from_main()
+        self.enter_canteen_from_kitchen()
+        self.select_temple_assembly()
         self.go_back_to_main()
         self.minimize_window()
     
@@ -396,9 +404,17 @@ class SwyController:
         self.activate_window()
         self.enter_kitchen_from_main()
         self.enter_canteen_from_kitchen()
-        self.check_buffet_dishes()
+        n_dishes_to_cook = self.check_temple_assembly_dishes()
         self.enter_kitchen_from_canteen()
-        self.cook_buffet_dishes()
+        self.cook_temple_assembly_dishes(n_dishes_to_cook)
+        self.go_back_to_main()
+        self.minimize_window()
+
+    def customer_wave_creation(self):
+        self.activate_window()
+        self.enter_kitchen_from_main()
+        self.enter_canteen_from_kitchen()
+        self.start_customer_wave()
         self.go_back_to_main()
         self.minimize_window()
 
