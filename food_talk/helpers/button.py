@@ -71,3 +71,6 @@ class Button():
     ADD_RABBIT = BtnFactory((1690, 415))
     LEVELING_UP = BtnFactory((1600, 800))
 
+    # Game launching
+    LOGIN_QR_CODE = BtnFactory(src='/game_launching/login_authorisation_code.png')
+

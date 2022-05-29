@@ -122,8 +122,8 @@ class CookingController(SwyController):
                     cook_succeeded = self.cook_eggplant()
                 not_enough_ingredients = not cook_succeeded
         else:
-            if locateOnScreen('cook_button.png', confidence=0.9):
-                click('close_cooking_menu_button.png')
+            if locateOnScreen(Button.COOK_NOW.SRC, confidence=0.9):
+                click(Button.CLOSE_MENU.POS)
                 print('Please wait for the farm to restock before cooking more dishes')
 
     def cook_eggplant(self):
@@ -316,9 +316,10 @@ class CookingController(SwyController):
         self.enter_kitchen_from_main()
         self.enter_canteen_from_kitchen()
         n_dishes_to_cook = self.check_buffet_dishes()
-        print(f'{n_dishes_to_cook} dishes of buffet pending...')
         self.enter_kitchen_from_canteen()
-        self.cook_buffet_dishes(n_dishes_to_cook)
+        if n_dishes_to_cook:
+            print(f'{n_dishes_to_cook} dishes of buffet pending...')
+            self.cook_buffet_dishes(n_dishes_to_cook)
         self.go_back_to_main()
         self.minimize_window()
     
@@ -335,21 +336,33 @@ class CookingController(SwyController):
         self.enter_kitchen_from_main()
         self.enter_canteen_from_kitchen()
         n_dishes_to_cook = self.check_temple_assembly_dishes()
-        print(f'{n_dishes_to_cook} dishes of temple assembly pending...')
         self.enter_kitchen_from_canteen()
-        self.cook_temple_assembly_dishes(n_dishes_to_cook)
+        if n_dishes_to_cook:
+            print(f'{n_dishes_to_cook} dishes of temple assembly pending...')
+            self.cook_temple_assembly_dishes(n_dishes_to_cook)
         self.go_back_to_main()
         self.minimize_window()
 
-    def customer_wave_creation(self):    
+    def customer_wave_creation(self, n=1):    
         self.activate_window()
         self.enter_kitchen_from_main()
         self.enter_canteen_from_kitchen()
-        self.start_customer_wave()
+        for _ in range(n):
+            self.start_customer_wave()
+        self.go_back_to_main()
+        self.minimize_window()
+    
+    def eggplant_meal_cooking(self):
+        self.activate_window()
+        self.enter_kitchen_from_main()
+        ready_to_cook_stoves = self.prepare_stoves_for_cooking(3)
+        for stove in ready_to_cook_stoves:
+            click(stove)
+            self.cook_eggplant()
         self.go_back_to_main()
         self.minimize_window()
 
 if __name__ == '__main__':
     ct = CookingController()
     ct.activate_window()
-    ct.cook_buffet_dishes(3)
+    ct.cook_locked_dishes()
