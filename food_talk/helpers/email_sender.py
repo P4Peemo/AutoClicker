@@ -2,7 +2,6 @@ import smtplib, ssl
 import imghdr
 from email.message import EmailMessage
 import datetime
-from time import time
 from dotenv import dotenv_values
 
 config = dotenv_values()

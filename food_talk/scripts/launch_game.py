@@ -5,7 +5,7 @@ import time
 
 from helpers.email_sender import send_email
 
-os.chdir(''.join([os.getcwd(), '\\food_talk\\assets\\game_launching']))
+os.chdir(''.join([os.getcwd(), '/food_talk/assets/game_launching/']))
 
 def launch_game():
     proc = Popen(["D:\Program Files\TxGameAssistant\AppMarket\AppMarket.exe"])
@@ -67,5 +67,6 @@ def login():
         pyautogui.click(100, 800)
         time.sleep(1)
 
-launch_game()
-login()
+if __name__ == '__main__':
+    launch_game()
+    login()

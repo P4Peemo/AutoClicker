@@ -1,6 +1,6 @@
 from schedule import run_pending, get_jobs
 from time import sleep
-from cooking_scheduler import *
+from food_talk.schedulers.cooking_scheduler import *
 
 if __name__ == '__main__':
     while True:
