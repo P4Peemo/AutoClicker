@@ -225,6 +225,8 @@ class SwyController:
                 buffet_dishes += self.__get_batch_pos('search_spring_buffet.png', 0.9)
                 buffet_dishes += self.__get_batch_pos('deer_beep_buffet.png', 0.9)
                 buffet_dishes += self.__get_batch_pos('thousand_old_gay_buffet.png', 0.9)
+                buffet_dishes += self.__get_batch_pos('poor_forest_buffet.png', 0.9)
+
             for dish in buffet_dishes:
                 pyautogui.click(dish.left, dish.top)
                 time.sleep(1)
@@ -243,11 +245,6 @@ class SwyController:
                 if close_btn := pyautogui.locateOnScreen('close_cooking_menu_button.png', confidence=0.9):
                     pyautogui.click(close_btn.left, close_btn.top)
                     time.sleep(1)
-            # TODO
-            # locate all buffet items location and check if need cooking
-            # if need then click cook
-            # if not enough ingredient
-            # go to next to check if need cook, if last, close tab
 
     def check_buffet_dishes(self):
         pyautogui.click(buttons['display_buffets_btn'])
@@ -265,6 +262,7 @@ class SwyController:
             if not submit_dish_locations or cook_dish_locations:
                 if close_btn := pyautogui.locateOnScreen('close_cooking_menu_button.png', confidence=0.9):
                     pyautogui.click(close_btn.left, close_btn.top)
+                    time.sleep(1)
                 continue
 
             for submit_dish_btn in submit_dish_locations:
@@ -384,6 +382,7 @@ class SwyController:
         self.enter_kitchen_from_main()
         self.enter_canteen_from_kitchen()
         n_dishes_to_cook = self.check_buffet_dishes()
+        print(f'{n_dishes_to_cook} dishes of buffet pending...')
         self.enter_kitchen_from_canteen()
         self.cook_buffet_dishes(n_dishes_to_cook)
         self.go_back_to_main()
@@ -402,6 +401,7 @@ class SwyController:
         self.enter_kitchen_from_main()
         self.enter_canteen_from_kitchen()
         n_dishes_to_cook = self.check_temple_assembly_dishes()
+        print(f'{n_dishes_to_cook} dishes of temple assembly pending...')
         self.enter_kitchen_from_canteen()
         self.cook_temple_assembly_dishes(n_dishes_to_cook)
         self.go_back_to_main()
