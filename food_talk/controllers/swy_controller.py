@@ -1,8 +1,7 @@
 # coding=utf-8
 import time
 from random import shuffle
-
-import pyautogui
+from pyautogui import click, getWindowsWithTitle, locateAllOnScreen, position, __version__
 
 buttons = {
     'hamburger_btn': (100, 400),
@@ -53,7 +52,7 @@ class SwyController:
 
     def activate_window(self):
         try:
-            self.__swy_window = pyautogui.getWindowsWithTitle(self.windowTitle)[0]
+            self.__swy_window = getWindowsWithTitle(self.windowTitle)[0]
         except:
             print(f'No window with {self.windowTitle} is found, please check your\
                 window name.')
@@ -76,7 +75,7 @@ class SwyController:
     def _get_batch_pos(self, img, confidence=1.0, isShuffling=False):
         if not img:
             return []
-        boxes = list(pyautogui.locateAllOnScreen(img, confidence=confidence))
+        boxes = list(locateAllOnScreen(img, confidence=confidence))
         boxes.sort(key=lambda x: (x.top, x.left))
         boxes = [box for i, box in enumerate(boxes)
                     if i == 0 or
@@ -89,20 +88,20 @@ class SwyController:
         return boxes
 
     def go_back_to_main(self):
-        pyautogui.click(buttons['back_btn'])
+        click(buttons['back_btn'])
         time.sleep(5)
     
     def click_bottom_blank(self):
-        pyautogui.click(960, 900)
+        click(960, 900)
         time.sleep(1)
 
     
 
     
 if __name__ == '__main__':
-    print(pyautogui.__version__)
+    print(__version__)
     controller = SwyController()
     controller.activate_window()
     time.sleep(2)
-    print(pyautogui.position()) 
+    print(position()) 
     controller.minimize_window()
