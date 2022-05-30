@@ -31,7 +31,7 @@ class CookingController(SwyController):
     
     def enter_kitchen_from_canteen(self):
         print('Entering kitchen from canteen')
-        click(Button.CANTEEN_KITCHEN_ENTRY)
+        click(Button.CANTEEN_KITCHEN_ENTRY.POS)
         sleep(5)
 
     def collect_dishes(self):
@@ -139,6 +139,10 @@ class CookingController(SwyController):
             print('No eggplant dish found')
         return False
     
+    # We clear the first n stoves (if cooking) for important dishes
+    # return the stove locations that are needed for cooking
+    # Reverse the order of clearing (from back to front) for temple assembly
+    # as to minimize interference with buffet cooking.
     def prepare_stoves_for_cooking(self, n, reversed=False):
         def map_to_nearest_stoves(stove_locs):
             stove_indices = []
@@ -146,7 +150,7 @@ class CookingController(SwyController):
                 x1, y1 = stove_loc
                 for j, std_stove_loc in enumerate(Button.STOVE_LOCS.POS):
                     x2, y2 = std_stove_loc
-                    if abs(x1 - x2) <= 50 and abs(y1 - y2) <= 50:
+                    if abs(x1 - x2) <= 100 and abs(y1 - y2) <= 100:
                         stove_locs[i] = std_stove_loc
                         stove_indices.append(j)
                         break
@@ -159,7 +163,7 @@ class CookingController(SwyController):
         stove_range = range(5 - n, 5) if reversed else range(n)
         cooking_indices = set(stove_range).difference(set(ready_indices))
         ready_to_cook_stoves += self.clear_cooking_dishes(cooking_indices)
-        return list(stove_range)
+        return [Button.STOVE_LOCS.POS[i] for i in stove_range]
 
     def cook_buffet_dishes(self, n):
         ready_to_cook_stoves = self.prepare_stoves_for_cooking(n)
@@ -168,13 +172,17 @@ class CookingController(SwyController):
         for stove in ready_to_cook_stoves:
             click(stove)
             sleep(1)
+            click(Button.ALL_CATEGORIES.POS)
+            sleep(1)
+
             if not buffet_dishes:
                 buffet_dishes += self._get_batch_pos(Button.BUFFET_BURN_TAIL.SRC, 0.9)
                 buffet_dishes += self._get_batch_pos(Button.BUFFET_EAGLE_RISE.SRC, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_SEARCH_SPRING, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_DEER_BEEP, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_THOUSAND_OLD_GAY, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_POOR_FOREST, 0.9)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_SEARCH_SPRING.SRC, 0.9)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_DEER_BEEP.SRC, 0.9)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_THOUSAND_OLD_GAY.SRC, 0.9)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_POOR_FOREST.SRC, 0.9)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_CURLY_RIVER.SRC, 0.9)
 
             for dish in buffet_dishes:
                 click(dish)
@@ -195,10 +203,10 @@ class CookingController(SwyController):
                     sleep(1)
 
     def check_buffet_dishes(self):
-        click(Button.BUFFET_LIST_ENTRY)
+        click(Button.BUFFET_LIST_ENTRY.POS)
         sleep(1)
         dishes_to_cook = 0
-        for buffet in Button.BUFFET_LOCS[::-1]:
+        for buffet in Button.BUFFET_LOCS.POS[::-1]:
             click(buffet)
             sleep(1)
             submit_dish_locations = self._get_batch_pos(Button.SUBMIT_DISH.SRC, confidence=0.9)
@@ -229,7 +237,7 @@ class CookingController(SwyController):
         click(Button.START_CUST_WAVE.POS)
         sleep(3)
         counter = 26
-        customer_wave_dishes = Button.CUST_WAVE_DISHES
+        customer_wave_dishes = Button.CUST_WAVE_DISHES.POS
         while counter > 0:
             for dish in customer_wave_dishes:
                 click(dish)
@@ -314,6 +322,7 @@ class CookingController(SwyController):
     def buffet_dish_cooking(self):
         self.activate_window()
         self.enter_kitchen_from_main()
+        self.collect_dishes()
         self.enter_canteen_from_kitchen()
         n_dishes_to_cook = self.check_buffet_dishes()
         self.enter_kitchen_from_canteen()
@@ -334,6 +343,7 @@ class CookingController(SwyController):
     def temple_assembly_dish_cooking(self):
         self.activate_window()
         self.enter_kitchen_from_main()
+        self.collect_dishes()
         self.enter_canteen_from_kitchen()
         n_dishes_to_cook = self.check_temple_assembly_dishes()
         self.enter_kitchen_from_canteen()
@@ -356,6 +366,7 @@ class CookingController(SwyController):
         self.activate_window()
         self.enter_kitchen_from_main()
         ready_to_cook_stoves = self.prepare_stoves_for_cooking(3)
+        print(ready_to_cook_stoves)
         for stove in ready_to_cook_stoves:
             click(stove)
             self.cook_eggplant()
@@ -365,4 +376,3 @@ class CookingController(SwyController):
 if __name__ == '__main__':
     ct = CookingController()
     ct.activate_window()
-    ct.cook_locked_dishes()

@@ -1,5 +1,4 @@
 from schedule import repeat, every
-import os
 from food_talk.controllers.cooking_controller import CookingController
 
 controller = CookingController()
@@ -23,8 +22,9 @@ def buffet_dish_cooking():
     controller.buffet_dish_cooking()
 
 @repeat(every().day.at("00:10"))
-@repeat(every().day.at("08:10"))
-@repeat(every().day.at("16:10"))
+@repeat(every().day.at("06:10"))
+@repeat(every().day.at("12:10"))
+@repeat(every().day.at("18:10"))
 def temple_assembly_dish_cooking():
     controller.temple_assembly_dish_cooking()
 
@@ -49,3 +49,7 @@ def locked_dish_cooking():
 @repeat(every().day.at("23:45"))
 def eggplant_meal_cooking():
     controller.eggplant_meal_cooking()
+
+
+if __name__ == '__main__':
+    controller.customer_wave_creation(1)

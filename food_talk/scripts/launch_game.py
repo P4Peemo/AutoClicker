@@ -18,9 +18,9 @@ def launch_game(target_location):
     sleep(5)
 
     # search for the logo and start the emulator
-    while (logo_btn := locateOnScreen('the_tale_of_food_logo.png', 0.9)) is None:
+    while (logo_btn := locateOnScreen(Button.GAME_LOGO.SRC, confidence=0.9)) is None:
         sleep(5)
-    click(logo_btn.left, logo_btn.top)
+    click(logo_btn)
     print('Attempting to start the game')
     while getActiveWindow() == app_market:
         sleep(5)
@@ -32,20 +32,20 @@ def launch_game(target_location):
     sleep(30)
     game_window = getWindowsWithTitle('Gameloop')[0]
     game_window.maximize()
-    while (close_notif_btn := locateOnScreen('close_notif_button.png', 0.9)) is None:
+    while (close_notif_btn := locateOnScreen(Button.CLOSE_NOTIF.SRC, confidence=0.9)) is None:
         sleep(10)
-    click(close_notif_btn.left, close_notif_btn.top)
+    click(close_notif_btn)
     print('closed notification board')
     sleep(2)
 
 def login():
     # check whether needs logging in
-    if android_btn := locateOnScreen('play_with_android_button.png', 0.9):
+    if android_btn := locateOnScreen(Button.PLAY_WITH_ANDROID.SRC, confidence=0.9):
         print('Requiring WeChat login authorization...')
         # agree to T&Cs
-        click(313, 928)
+        click(Button.TERMS_N_CONDITIONS.POS)
         sleep(1)
-        click(android_btn.left, android_btn.top)
+        click(android_btn)
 
         # wait for authorization.
         sleep(5)
@@ -53,9 +53,9 @@ def login():
         sleep(2)
         send_email(Button.LOGIN_QR_CODE.SRC)
 
-    while (enter_game_btn := locateOnScreen('enter_game_button.png', 0.9)) is None:
+    while (enter_game_btn := locateOnScreen(Button.ENTER_GAME.SRC, confidence=0.9)) is None:
         sleep(5)
-    click(enter_game_btn.left, enter_game_btn.top)
+    click(enter_game_btn)
     print('entering game...')
     sleep(15)
 

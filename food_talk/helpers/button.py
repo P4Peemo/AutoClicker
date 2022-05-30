@@ -1,5 +1,6 @@
 from os import getcwd
-
+from pyautogui import position
+from time import sleep
 cwd = getcwd()
 
 class Button():
@@ -54,23 +55,77 @@ class Button():
     BUFFET_DEER_BEEP = BtnFactory(src='/dish_cooking/deer_beep_buffet.png')
     BUFFET_THOUSAND_OLD_GAY = BtnFactory(src='/dish_cooking/thousand_old_gay_buffet.png')
     BUFFET_POOR_FOREST = BtnFactory(src='/dish_cooking/poor_forest_buffet.png')
+    BUFFET_CURLY_RIVER = BtnFactory(src='/dish_cooking/curly_river_buffet.png')
     # Temple assembly
     TEMPLE_ASSEMBLY_ENTRY = BtnFactory((180, 940))
     TEMPLE_ASSEMBLY_ICON = BtnFactory(src='/dish_cooking/temple_assembly.png')
     INGREDIENT_SHARD_ICON = BtnFactory(src='/dish_cooking/ingredient_shard.png')
-    # routinely
-    FIRST_EXOTIC_SEARCH = BtnFactory((250, 490))
+    
+    # Routinely
+    # Exotic search
+    FIRST_EXOTIC_SEARCH_PANEL_LOC = BtnFactory((250, 490))
+    FIRST_EXOTIC_SEARCH_FULL_LOC = BtnFactory((320, 300))
+    WELCOME_HOME = BtnFactory((1660, 925))
+    CLAIM_EXOTIC_SKYWORK_STONE = BtnFactory((600, 240))
     ONLINE_REWARD = BtnFactory((1080, 170))
     CLAIM_ONLINE_REWARD = BtnFactory((1370, 650))
+    # Butler interaction
     MAIN_PAGE_CHAR_LOC = BtnFactory((580, 540))
     BUTLER_PAGE_ENTRY = BtnFactory((400, 835))
     FIRST_GIFT_LOC = BtnFactory((1280, 280))
     GIFT_NOW = BtnFactory((1620, 815))
+    # Char level up
     CHAR_LIST_ENTRY = BtnFactory((1600, 950))
     ADD_CHAR_EXP = BtnFactory((1570, 250))
     ADD_RABBIT = BtnFactory((1690, 415))
     LEVELING_UP = BtnFactory((1600, 800))
+    LEVEL_ICON = BtnFactory(src='/routine_fulfilling/character_level_icon.png')
+    SIGN_IN = BtnFactory((1200, 290))
+    # Make wish
+    CLAN_ENTRY = BtnFactory((1320, 960))
+    CLAN_ACTIVITIES_ENTRY = BtnFactory((1530, 850))
+    MAKE_WISH_PAGE_ENTRY = BtnFactory((310, 760))
+    MAKE_WISH_LIST_ENTRY = BtnFactory((1740, 260))
+    SELECT_WISHED_CHAR = BtnFactory((400, 390))
+    CONFIRM_MAKE_WISH = BtnFactory((960, 850))
+    CLOSE_MAKE_WISH = BtnFactory((1670, 135))
+    CHAR_FULFILLED = BtnFactory(src='/routine_fulfilling/character_fulfilled.png')
+    # Home
+    HOME_ROUND = BtnFactory((260, 330))
+    CLAIM_SKYWORK_STONE_ENTRY = BtnFactory((1750, 775))
+    FREE_SKYWORK_STONE_DRAW = BtnFactory((1220, 900))
+    CLOSE_SKYWORK_STONE_MENU = BtnFactory((1670, 160))
+    STEAM_RABBIT_ENTRY = BtnFactory((200, 810))
+    STEAM_NOW = BtnFactory((990, 750))
+    CLOSE_STEAM_RABBIT_MENU = BtnFactory((1470, 220))
+    VISIT_LIST_ENTRY = BtnFactory((1750, 115))
+    VISIT_NOW = BtnFactory((1510, 465))
+    LIKE_NOW = BtnFactory((1620, 95))
+    CLOSE_VISIT_LIST = BtnFactory((1660, 140))
+    # Shop
+    SHOP_ENTRY = BtnFactory((160, 330))
+    STRAIGHT_SALE = BtnFactory((1700, 940))
+    LIMITED_TIME = BtnFactory((870, 205))
+    DAILY_FREE_GIFT = BtnFactory((680, 440))
+    MONTHLY_SALARY = BtnFactory((1450, 930))
+    CLAIM_GOLD_YU = BtnFactory((930, 660))
+    MISCELLANEOUS = BtnFactory((1200, 935))
+    UTENSILS = BtnFactory((320, 450))
+    BABEE = BtnFactory(src='/routine_fulfilling/babee.png')
+    CONFIRM_BABEE_PURCHASE = BtnFactory((960, 820))
+    # Activity
+    ACTIVITY_PAGE_ENTRY = BtnFactory((1370, 170))
+    LUNCHBOX_WITH_LOVE = BtnFactory(src='/routine_fulfilling/lunchbox_with_love.png')
+    CLAIM_FREE_RICE_LOCS = BtnFactory([(750, 930), (1095, 930), (1440, 930)])
+    CLOSE_ACTIVITY_PAGE = BtnFactory((1775, 80))
 
     # Game launching
     LOGIN_QR_CODE = BtnFactory(src='/game_launching/login_authorisation_code.png')
-
+    GAME_LOGO = BtnFactory(src='/game_launching/the_tale_of_food_logo.png')
+    CLOSE_NOTIF = BtnFactory(src='/game_launching/close_notif_button.png')
+    PLAY_WITH_ANDROID = BtnFactory(src='/game_launching/play_with_android_button.png')
+    TERMS_N_CONDITIONS = BtnFactory((313, 928))
+    ENTER_GAME = BtnFactory(src='/game_launching/enter_game_button.png')
+if __name__ == '__main__':
+    sleep(2)
+    print(position())
