@@ -3,6 +3,7 @@ from time import sleep
 from pyautogui import getWindowsWithTitle
 
 import food_talk.schedulers.cooking_scheduler
+import food_talk.schedulers.routine_scheduler
 from launch_game import launch_game, login
 
 # TODO
