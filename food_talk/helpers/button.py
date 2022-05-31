@@ -123,11 +123,14 @@ class Button():
 
     # Game launching
     LOGIN_QR_CODE = BtnFactory(src='/game_launching/login_authorisation_code.png')
-    GAME_LOGO = BtnFactory(src='/game_launching/the_tale_of_food_logo.png')
+    # requiring our game to be the first in the list
+    GAME_LOGO = BtnFactory((250, 650), src='/game_launching/the_tale_of_food_logo.png')
     CLOSE_NOTIF = BtnFactory(src='/game_launching/close_notif_button.png')
     PLAY_WITH_ANDROID = BtnFactory(src='/game_launching/play_with_android_button.png')
     TERMS_N_CONDITIONS = BtnFactory((313, 928))
     ENTER_GAME = BtnFactory(src='/game_launching/enter_game_button.png')
+    MINE = BtnFactory((960, 90))
+
 if __name__ == '__main__':
     sleep(2)
     print(position())

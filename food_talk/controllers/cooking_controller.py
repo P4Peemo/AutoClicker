@@ -176,13 +176,13 @@ class CookingController(SwyController):
             sleep(1)
 
             if not buffet_dishes:
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_BURN_TAIL.SRC, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_EAGLE_RISE.SRC, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_SEARCH_SPRING.SRC, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_DEER_BEEP.SRC, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_THOUSAND_OLD_GAY.SRC, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_POOR_FOREST.SRC, 0.9)
-                buffet_dishes += self._get_batch_pos(Button.BUFFET_CURLY_RIVER.SRC, 0.9)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_BURN_TAIL.SRC, 0.8)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_EAGLE_RISE.SRC, 0.8)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_SEARCH_SPRING.SRC, 0.8)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_DEER_BEEP.SRC, 0.8)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_THOUSAND_OLD_GAY.SRC, 0.8)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_POOR_FOREST.SRC, 0.8)
+                buffet_dishes += self._get_batch_pos(Button.BUFFET_CURLY_RIVER.SRC, 0.8)
 
             for dish in buffet_dishes:
                 click(dish)

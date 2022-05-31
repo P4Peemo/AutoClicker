@@ -54,4 +54,4 @@ def eggplant_meal_cooking():
 
 
 if __name__ == '__main__':
-    controller.customer_wave_creation(1)
+    buffet_dish_cooking()

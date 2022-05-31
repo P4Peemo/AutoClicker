@@ -14,13 +14,13 @@ def launch_game(target_location):
     sleep(2)
 
     # switch to "我的" tab
-    click(800, 70)
+    click(Button.MINE.POS)
     sleep(5)
 
     # search for the logo and start the emulator
-    while (logo_btn := locateOnScreen(Button.GAME_LOGO.SRC, confidence=0.9)) is None:
-        sleep(5)
-    click(logo_btn)
+    # while (logo_btn := locateOnScreen(Button.GAME_LOGO.SRC, confidence=0.9)) is None:
+    #     sleep(5)
+    click(Button.GAME_LOGO.POS)
     print('Attempting to start the game')
     while getActiveWindow() == app_market:
         sleep(5)
