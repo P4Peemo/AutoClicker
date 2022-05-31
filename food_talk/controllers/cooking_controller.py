@@ -366,7 +366,6 @@ class CookingController(SwyController):
         self.activate_window()
         self.enter_kitchen_from_main()
         ready_to_cook_stoves = self.prepare_stoves_for_cooking(3)
-        print(ready_to_cook_stoves)
         for stove in ready_to_cook_stoves:
             click(stove)
             self.cook_eggplant()

@@ -26,6 +26,7 @@ def launch_game(target_location):
         sleep(5)
     print('Starting up the game emulator')
     app_market.close()
+    proc.kill()
     sleep(5)
 
     # wait and grab the game window, note that the emulator itself has an empty title.

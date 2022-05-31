@@ -1,4 +1,4 @@
-from schedule import repeat, every
+from schedule import repeat, every, run_all
 
 from food_talk.controllers.routine_controller import RoutineController
 from food_talk.controllers.cooking_controller import CookingController
@@ -28,3 +28,6 @@ def exotic_expeditions():
 @repeat(every().day.at("19:00"))
 def make_dirt_purchase():
     controller.make_dirt_purchase()
+
+if __name__ == '__main__':
+    pass

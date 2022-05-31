@@ -80,7 +80,13 @@ class RoutineController(SwyController):
         sleep(1)
         click(Button.MAKE_WISH_PAGE_ENTRY.POS)
         sleep(1)
-        # TODO add thanks functionality
+        thank_btns = self._get_batch_pos(Button.THANK_WISH.SRC, confidence=0.9)
+        for btn in thank_btns:
+            click(btn)
+        sleep(1)
+        if thank_btns:
+            click(Button.CLOSE_THANK_WISH.POS)
+            sleep(1)
         click(Button.MAKE_WISH_LIST_ENTRY.POS)
         sleep(1)
         if locateOnScreen(Button.CHAR_FULFILLED.SRC, confidence=0.9):
@@ -117,6 +123,7 @@ class RoutineController(SwyController):
         sleep(1)
         click(Button.STEAM_NOW.POS)
         sleep(1)
+        self.click_bottom_blank()
         click(Button.CLOSE_STEAM_RABBIT_MENU.POS)
         sleep(1)
         # click like button
@@ -190,6 +197,10 @@ class RoutineController(SwyController):
     
     def claim_rewards(self):
         self.activate_window()
+        self.check_in()
+        self.make_wish()
+        self.interact_with_character()
+        self.upgrade_character()
         self.claim_online_rewards()
         self.claim_shop_rewards()
         self.claim_home_rewards()

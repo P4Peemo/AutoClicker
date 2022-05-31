@@ -33,6 +33,8 @@ def customer_wave_creation():
     controller.customer_wave_creation(3)
 
 @repeat(every().day.at("00:15"))
+@repeat(every().day.at("01:15"))
+@repeat(every().day.at("04:15"))
 @repeat(every().day.at("08:15"))
 @repeat(every().day.at("10:15"))
 @repeat(every().day.at("12:15"))

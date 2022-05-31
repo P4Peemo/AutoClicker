@@ -85,6 +85,8 @@ class Button():
     CLAN_ENTRY = BtnFactory((1320, 960))
     CLAN_ACTIVITIES_ENTRY = BtnFactory((1530, 850))
     MAKE_WISH_PAGE_ENTRY = BtnFactory((310, 760))
+    THANK_WISH = BtnFactory(src='/routine_fulfilling/thank_wish_button.png')
+    CLOSE_THANK_WISH = BtnFactory((1450, 250))
     MAKE_WISH_LIST_ENTRY = BtnFactory((1740, 260))
     SELECT_WISHED_CHAR = BtnFactory((400, 390))
     CONFIRM_MAKE_WISH = BtnFactory((960, 850))

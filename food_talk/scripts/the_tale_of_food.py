@@ -19,8 +19,7 @@ if __name__ == '__main__':
     if not getWindowsWithTitle('Gameloop'):
         launch_game(config['APP_MARKET_PATH'])
         login()
-    all_jobs = get_jobs()
-    print(f'{len(all_jobs)} tasks scheduled.')
+    print(f'{len(get_jobs())} tasks scheduled.')
     while True:
         run_pending()
         sleep(1)
